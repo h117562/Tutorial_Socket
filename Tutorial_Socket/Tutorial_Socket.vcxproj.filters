@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="DirectX">
+      <UniqueIdentifier>{691a8cd9-b54a-4e6d-92cd-9d9acd106bd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{4a6a0ab9-16be-4983-8183-47186642f203}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\HLSL">
+      <UniqueIdentifier>{09ec3b50-aecf-434a-a37b-1647e29b06da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\ShaderClass">
+      <UniqueIdentifier>{8324383e-d22f-4bac-b5b9-a4f6441d5d40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{0381ede7-657b-4d37-b630-9dd3339634aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Texture">
+      <UniqueIdentifier>{881c266d-415e-4184-a57a-79aae71cc73a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Elemetns">
+      <UniqueIdentifier>{a4431e27-afd2-487d-8af3-f747f4d7cbb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\TextClass">
+      <UniqueIdentifier>{b3050870-fd9f-4736-907a-8552fcb372fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Chat">
+      <UniqueIdentifier>{8a01d3a7-d1c8-4a6b-ab8d-98a109a338f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Parents">
+      <UniqueIdentifier>{ed030ba1-ab81-49db-a854-db32f14dfdc0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TextureResource.h">
+      <Filter>Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="RectTexture2D.h">
+      <Filter>UI\Parents</Filter>
+    </ClInclude>
+    <ClInclude Include="UIManager.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="TextClass.h">
+      <Filter>UI\TextClass</Filter>
+    </ClInclude>
+    <ClInclude Include="RectTransform.h">
+      <Filter>UI\Parents</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugInfo.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderManager.h">
+      <Filter>Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="D3DClass.h">
+      <Filter>DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationClass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraClass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="EventClass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameTimer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Global.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicStructures.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="InputClass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemClass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UIShaderClass.h">
+      <Filter>Shader\ShaderClass</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>UI\Elemetns</Filter>
+    </ClInclude>
+    <ClInclude Include="TextInput.h">
+      <Filter>UI\Elemetns</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>UI\Elemetns</Filter>
+    </ClInclude>
+    <ClInclude Include="TextLabel.h">
+      <Filter>UI\Elemetns</Filter>
+    </ClInclude>
+    <ClInclude Include="ChatScene.h">
+      <Filter>UI\Chat</Filter>
+    </ClInclude>
+    <ClInclude Include="MainScene.h">
+      <Filter>UI\Chat</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingScene.h">
+      <Filter>UI\Chat</Filter>
+    </ClInclude>
+    <ClInclude Include="TextBox.h">
+      <Filter>UI\Elemetns</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="InputClass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemClass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationClass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraClass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameTimer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Global.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UIManager.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="TextClass.cpp">
+      <Filter>UI\TextClass</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugInfo.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderManager.cpp">
+      <Filter>Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="D3DClass.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="UIShaderClass.cpp">
+      <Filter>Shader\ShaderClass</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatScene.cpp">
+      <Filter>UI\Chat</Filter>
+    </ClCompile>
+    <ClCompile Include="MainScene.cpp">
+      <Filter>UI\Chat</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingScene.cpp">
+      <Filter>UI\Chat</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\TextureVS.hlsl">
+      <Filter>Shader\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\TexturePS.hlsl">
+      <Filter>Shader\HLSL</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
