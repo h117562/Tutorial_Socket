@@ -2,7 +2,6 @@
 
 SocketClass::SocketClass()
 {
-	SocketClass::GetInstance();
 }
 
 SocketClass::~SocketClass()
@@ -99,7 +98,7 @@ void SocketClass::MessageReceive()
 	{
 		//오류 체크
 		result = recv(m_sck, &buffer, 1, 0);
-		if (result == SOCKET_ERROR)
+		if (result <= 0)
 		{
 			Disconnect();
 			break;
@@ -112,7 +111,7 @@ void SocketClass::MessageReceive()
 		{
 			wchar_t chatBuffer[256];//최대 입력 가능 글자를 256로 해두었음
 			result = recv(m_sck, (char*)chatBuffer, 256, 0);
-			if (result == SOCKET_ERROR)
+			if (result <= 0)
 			{
 				Disconnect();
 				break;
