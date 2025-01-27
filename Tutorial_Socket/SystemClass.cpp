@@ -31,6 +31,13 @@ bool SystemClass::Initialize()
 	//EventClass 초기화
 	EventClass::GetInstance();
 
+	//SocketClass 초기화
+	result = SocketClass::GetInstance().Initialize();
+	if (!result)
+	{
+		return false;
+	}
+
 	//InputClass 초기화
 	result = InputClass::GetInstance().Initialize(m_hinstance, m_hwnd);
 	if (!result)

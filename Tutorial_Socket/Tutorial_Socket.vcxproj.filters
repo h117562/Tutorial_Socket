@@ -43,6 +43,9 @@
     <Filter Include="UI\Parents">
       <UniqueIdentifier>{ed030ba1-ab81-49db-a854-db32f14dfdc0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Socket">
+      <UniqueIdentifier>{5d857950-f586-4bd9-aa2c-c5da55e62fc6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TextureResource.h">
@@ -117,8 +120,11 @@
     <ClInclude Include="LoadingScene.h">
       <Filter>UI\Chat</Filter>
     </ClInclude>
-    <ClInclude Include="TextBox.h">
+    <ClInclude Include="ChatBox.h">
       <Filter>UI\Elemetns</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketClass.h">
+      <Filter>Socket</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +175,9 @@
     </ClCompile>
     <ClCompile Include="LoadingScene.cpp">
       <Filter>UI\Chat</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketClass.cpp">
+      <Filter>Socket</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

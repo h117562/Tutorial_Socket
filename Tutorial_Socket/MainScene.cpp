@@ -152,7 +152,10 @@ void MainScene::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMana
 
 	if (m_enterBtn->IsPressed())
 	{
-		EventClass::GetInstance().Publish(UI_EVENT::ACTIVE_CHAT_SCENE);
+		//ipBox에 입력한 IP와 8001 포트 번호로 연결 시도
+		SocketClass::GetInstance().Connect(m_ipBox->GetText(), 8001);
+
+		EventClass::GetInstance().Publish(SCENE_EVENT::ACTIVE_LOADING_SCENE);
 	}
 
 	return;

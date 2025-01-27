@@ -4,7 +4,7 @@ ChatScene::ChatScene()
 {
 	m_exitBtn = 0;
 	m_msgSend = 0;
-	m_chatLogs = 0;
+	m_chatBox = 0;
 	m_active = false;
 }
 
@@ -22,10 +22,10 @@ ChatScene::~ChatScene()
 		m_msgSend = nullptr;
 	}
 
-	if (m_chatLogs)
+	if (m_chatBox)
 	{
-		delete m_chatLogs;
-		m_chatLogs = nullptr;
+		delete m_chatBox;
+		m_chatBox = nullptr;
 	}
 }
 
@@ -81,21 +81,21 @@ bool ChatScene::Initialize(ID3D11Device* pDevice, TextClass* pTextClass)
 	}
 
 
-	m_chatLogs = new TextBox;
-	if (!m_chatLogs)
+	m_chatBox = new ChatBox;
+	if (!m_chatBox)
 	{
 		return false;
 	}
 
-	result = m_chatLogs->Initialize(pDevice, L"..//data//assets//logbg.png", XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(800, 600.0f, 1.0f), ALIGNMENT_TOP);
+	result = m_chatBox->Initialize(pDevice, L"..//data//assets//logbg.png", XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(800, 600.0f, 1.0f), ALIGNMENT_TOP);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	m_chatLogs->SetTextMargin(10.0f, 10.0f);
+	m_chatBox->SetTextMargin(10.0f, 10.0f);
 
-	result = m_chatLogs->SetTextFormat(
+	result = m_chatBox->SetTextFormat(
 		pTextClass,
 		L"바탕",
 		DWRITE_FONT_WEIGHT::DWRITE_FONT_WEIGHT_BOLD,
@@ -107,16 +107,19 @@ bool ChatScene::Initialize(ID3D11Device* pDevice, TextClass* pTextClass)
 		return false;
 	}
 
-	m_chatLogs->SetHorizontalAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-	m_chatLogs->SetVerticalAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	m_chatBox->SetHorizontalAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+	m_chatBox->SetVerticalAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
-	result = m_chatLogs->SetTextBrush(pTextClass, 1.0f, 0.9f, 0.9f, 1.0f);
+	result = m_chatBox->SetTextBrush(pTextClass, 1.0f, 0.9f, 0.9f, 1.0f);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-
+	//새로운 채팅 내역 밀어 넣기
+	EventClass::GetInstance().Subscribe(SOCKET_EVENT::NEW_CHAT, [&](wchar_t* data){
+		m_chatBox->AddText(data);
+		});
 
 	return true;
 }
@@ -141,7 +144,8 @@ void ChatScene::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMana
 
 	if (m_exitBtn->IsPressed())
 	{
-		EventClass::GetInstance().Publish(UI_EVENT::ACTIVE_MAIN_SCENE);
+		SocketClass::GetInstance().Disconnect();//연결 종료
+		EventClass::GetInstance().Publish(SCENE_EVENT::ACTIVE_MAIN_SCENE);//처음 씬으로 돌아감
 	}
 
 	return;
@@ -151,7 +155,7 @@ bool ChatScene::Render(D3DClass* pD3DClass, TextClass* pTextClass, ShaderManager
 {
 	bool result;
 
-	result = m_chatLogs->Render(pD3DClass->GetDeviceContext(), pTextClass, pShaderManager->GetUIShader(), m_chatLogs->GetWorldMatrix(), view, proj);
+	result = m_chatBox->Render(pD3DClass->GetDeviceContext(), pTextClass, pShaderManager->GetUIShader(), m_chatBox->GetWorldMatrix(), view, proj);
 	if (!result)
 	{
 		return false;
@@ -179,6 +183,11 @@ void ChatScene::ToggleActive()
 
 void ChatScene::SetActive(bool state)
 {
+	if (!state)
+	{
+		m_chatBox->ClearText();
+	}
+
 	m_active = state;
 }
 

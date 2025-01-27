@@ -7,6 +7,7 @@
 #include "ShaderManager.h"
 #include "CameraClass.h"
 #include "EventClass.h"
+#include "SocketClass.h"
 
 //Elements
 #include "Button.h"

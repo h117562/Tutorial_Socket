@@ -123,6 +123,11 @@ public:
 	{
 	}
 
+	const wchar_t* GetText()
+	{
+		return m_text.c_str();
+	}
+
 	//텍스트 가로 정렬
 	void SetHorizontalAlignment(DWRITE_TEXT_ALIGNMENT flag)
 	{

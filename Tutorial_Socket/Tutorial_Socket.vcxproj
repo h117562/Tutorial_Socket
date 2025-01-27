@@ -147,9 +147,10 @@
     <ClInclude Include="RectTexture2D.h" />
     <ClInclude Include="RectTransform.h" />
     <ClInclude Include="ShaderManager.h" />
+    <ClInclude Include="SocketClass.h" />
     <ClInclude Include="SystemClass.h" />
     <ClInclude Include="MainScene.h" />
-    <ClInclude Include="TextBox.h" />
+    <ClInclude Include="ChatBox.h" />
     <ClInclude Include="TextInput.h" />
     <ClInclude Include="TextClass.h" />
     <ClInclude Include="TextLabel.h" />
@@ -169,6 +170,7 @@
     <ClCompile Include="InputClass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
+    <ClCompile Include="SocketClass.cpp" />
     <ClCompile Include="SystemClass.cpp" />
     <ClCompile Include="MainScene.cpp" />
     <ClCompile Include="TextClass.cpp" />

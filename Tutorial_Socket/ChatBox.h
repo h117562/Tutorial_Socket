@@ -7,20 +7,19 @@
 #include "InputClass.h"
 #include "textclass.h"
 
-//배경 이미지와 함께 텍스트를 렌더링하는 UI요소
-class TextBox : public RectTransform, public RectTexture2D
+//채팅 내역을 출력하기 위한 요소
+class ChatBox : public RectTransform, public RectTexture2D
 {
 public:
-	TextBox()
+	ChatBox()
 	{
 		m_text = L"";
-		m_limit = 255;
 		m_textFormat = nullptr;
 		m_textBrush = nullptr;
 		m_margin = XMFLOAT2(0.0f, 0.0f);
 	}
 
-	~TextBox()
+	~ChatBox()
 	{
 		if (m_textFormat)
 		{
@@ -84,25 +83,14 @@ public:
 		return true;
 	}
 
-	void SetText(const wchar_t* text)
+	void ClearText()
 	{
-		unsigned int len = wcslen(text);
-
-		if (len > m_limit)
-		{
-			m_text = std::wstring(text, m_limit);
-		}
-		else
-		{
-			m_text = text;
-		}
-
+		m_text.clear();
 	}
 
-	void SetLimitLength(const UINT length)
+	void AddText(const wchar_t* text)
 	{
-		m_limit = length;
-		m_text.reserve(length);//배열 길이 미리 예약
+		m_text.append(text);
 	}
 
 	//텍스트 가로 정렬
@@ -186,7 +174,6 @@ private:
 	std::wstring m_text;
 	D2D1_RECT_F m_textArea;
 	XMFLOAT2 m_margin;
-	UINT m_limit;
 	IDWriteTextFormat* m_textFormat;
 	ID2D1SolidColorBrush* m_textBrush;
 };

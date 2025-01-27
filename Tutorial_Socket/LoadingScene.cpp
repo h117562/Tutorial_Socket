@@ -87,20 +87,31 @@ void LoadingScene::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderM
 	//텍스트 업데이트용
 	m_count += pFrameTimer->GetTime();
 
-	if (m_count > 4.0f)
-	{
-		m_count = 0.0f;
-	}
-
 	std::wstring tempText(L"접속중...");
 
-	for (short i = 0; i < (short)m_count; i++)
+	int repeat = (int)m_count % 4 + 1;
+
+	for (int i = 0; i < repeat; i++)
 	{
 		tempText.pop_back();
 	}
 	
 	m_label->SetText(tempText.c_str());
-	
+
+	state = SocketClass::GetInstance().CheckOnline();
+	if (state)
+	{
+		//연결 성공하면 다음 씬으로 넘어감
+		EventClass::GetInstance().Publish(SCENE_EVENT::ACTIVE_CHAT_SCENE);
+	}
+
+	//4초 넘게 연결중이면 다시 처음으로 돌아감
+	if (m_count > 4.0f)
+	{
+		EventClass::GetInstance().Publish(SCENE_EVENT::ACTIVE_MAIN_SCENE);
+		MessageBox(hwnd, L"연결 실패", L"Failed", MB_OK);
+	}
+
 	return;
 }
 

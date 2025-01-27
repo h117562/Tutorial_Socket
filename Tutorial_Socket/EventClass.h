@@ -10,15 +10,24 @@ enum struct UI_EVENT
 {
 	DEFAULT,
 	TOGGLE_DEBUG_MODE,
-	ACTIVE_MAIN_SCENE,
-	ACTIVE_LOADING_SCENE,
-	ACTIVE_CHAT_SCENE,
 	EVENT_COUNT,//이벤트 개수 //[]배열 크기 할당하기 위함
 };
 
 enum struct SCENE_EVENT
 {
 	DEFAULT,
+	ACTIVE_MAIN_SCENE,
+	ACTIVE_LOADING_SCENE,
+	ACTIVE_CHAT_SCENE,
+	EVENT_COUNT,//이벤트 개수
+};
+
+enum struct SOCKET_EVENT
+{
+	DEFAULT,
+	JOIN_ROOM,
+	EXIT_ROOM,
+	NEW_CHAT,
 	EVENT_COUNT,//이벤트 개수
 };
 
@@ -47,7 +56,7 @@ private:
 	}
 
 public:
-
+	////////////////////////////UI_EVENT/////////////////////////////
 	//이벤트 발생 시, 실행할 함수를 함수 포인터 배열에 등록하는 함수
 	void Subscribe(UI_EVENT event, std::function<void()> func)
 	{
@@ -62,10 +71,41 @@ public:
 			m_uiEvents[TO_INT(event)][i]();
 		}
 	}
+	////////////////////////////SCENE_EVENT/////////////////////////////
+	//이벤트 발생 시, 실행할 함수를 함수 포인터 배열에 등록하는 함수
+	void Subscribe(SCENE_EVENT event, std::function<void()> func)
+	{
+		m_sceneEvents[TO_INT(event)].push_back(func);
+	}
+
+	//이벤트 발생 시,  해당 이벤트의 함수들을 실행
+	void Publish(SCENE_EVENT event)
+	{
+		for (UINT i = 0; i < m_sceneEvents[TO_INT(event)].size(); i++)
+		{
+			m_sceneEvents[TO_INT(event)][i]();
+		}
+	}
+	////////////////////////////SOCKET_EVENT/////////////////////////////
+	//이벤트 발생 시, 실행할 함수를 함수 포인터 배열에 등록하는 함수
+	void Subscribe(SOCKET_EVENT event, std::function<void(wchar_t*)> func)
+	{
+		m_socketEvents[TO_INT(event)].push_back(func);
+	}
+
+	//이벤트 발생 시,  해당 이벤트의 함수들을 실행
+	void Publish(SOCKET_EVENT event, wchar_t* buffer)
+	{
+		for (UINT i = 0; i < m_sceneEvents[TO_INT(event)].size(); i++)
+		{
+			m_socketEvents[TO_INT(event)][i](buffer);
+		}
+	}
 
 private:
 	std::vector<std::function<void()>> m_uiEvents[TO_INT(UI_EVENT::EVENT_COUNT)];
 	std::vector<std::function<void()>> m_sceneEvents[TO_INT(SCENE_EVENT::EVENT_COUNT)];
+	std::vector<std::function<void(wchar_t*)>> m_socketEvents[TO_INT(SOCKET_EVENT::EVENT_COUNT)];
 };
 
 #endif

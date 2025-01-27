@@ -1,17 +1,20 @@
 #ifndef _CHAT_SCENE_
 #define _CHAT_SCENE_
 
+#include <vector>
+
 #include "D3DClass.h"
 #include "TextClass.h"
 #include "InputClass.h"
 #include "ShaderManager.h"
 #include "CameraClass.h"
 #include "EventClass.h"
+#include "SocketClass.h"
 
 //Elements
 #include "Button.h"
 #include "TextInput.h"
-#include "TextBox.h"
+#include "ChatBox.h"
 
 class ChatScene
 {
@@ -29,8 +32,7 @@ public:
 private:
 	Button* m_exitBtn;//퇴장 버튼
 	TextInput* m_msgSend;//입력용 텍스트 박스
-	TextBox* m_chatLogs;//채팅방 로그 출력용
-
+	ChatBox* m_chatBox;//채팅방 로그 출력용
 	bool m_active;
 };
 

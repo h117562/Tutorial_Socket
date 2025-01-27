@@ -336,7 +336,7 @@ void InputClass::AddText(const wchar_t text)
 {
 	unsigned int len = wcslen(m_text);
 
-	if (len < 255)//빈칸 한자리가 남을 때 까지
+	if (len < 256)//빈칸 한자리가 남을 때 까지
 	{
 		wcscat_s(m_text, 256, &text);
 	}

@@ -145,8 +145,6 @@ HRESULT TextClass::CreateTextBrush(ID2D1SolidColorBrush** pBrush, float r, float
 	return result;
 }
 
-
-
 //텍스트 렌더링 기본 폰트, 컬러
 void TextClass::RenderText(const wchar_t* ptext, const D2D1_RECT_F& renderRect)
 {
@@ -156,7 +154,7 @@ void TextClass::RenderText(const wchar_t* ptext, const D2D1_RECT_F& renderRect)
 		m_defaultFormat,
 		renderRect,
 		m_defaultBrush,
-		D2D1_DRAW_TEXT_OPTIONS_NONE,
+		D2D1_DRAW_TEXT_OPTIONS_CLIP,//Rect영역을 벗어나면 자름
 		DWRITE_MEASURING_MODE_NATURAL
 	);
 }
@@ -170,7 +168,7 @@ void TextClass::RenderText(const wchar_t* ptext, const D2D1_RECT_F& renderRect, 
 		pformat,
 		renderRect,
 		pbrush,
-		D2D1_DRAW_TEXT_OPTIONS_NONE,
+		D2D1_DRAW_TEXT_OPTIONS_CLIP,//Rect영역을 벗어나면 자름
 		DWRITE_MEASURING_MODE_NATURAL
 	);
 }

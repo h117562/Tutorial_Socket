@@ -1,10 +1,11 @@
 #ifndef _SYSTEMCLASS_H_
 #define _SYSTEMCLASS_H_
 
-#include <Windows.h>
+#include <windows.h>
 #include <fstream>
 #include <string>
 
+#include "SocketClass.h"
 #include "ApplicationClass.h"
 #include "InputClass.h"
 #include "FrameTimer.h"

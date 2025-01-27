@@ -43,19 +43,19 @@ bool UIManager::Initialize(D3DClass* pD3Dclass, TextClass* pTextClass)
 		return false;
 	}
 
-	EventClass::GetInstance().Subscribe(UI_EVENT::ACTIVE_LOADING_SCENE, [&]() {
+	EventClass::GetInstance().Subscribe(SCENE_EVENT::ACTIVE_LOADING_SCENE, [&]() {
 		m_mainScene.SetActive(false); 
 		m_chatScene.SetActive(false);
 		m_loadingScene.SetActive(true);
 		});
 
-	EventClass::GetInstance().Subscribe(UI_EVENT::ACTIVE_MAIN_SCENE, [&]() {
+	EventClass::GetInstance().Subscribe(SCENE_EVENT::ACTIVE_MAIN_SCENE, [&]() {
 		m_mainScene.SetActive(true);
 		m_chatScene.SetActive(false);
 		m_loadingScene.SetActive(false);
 		});
 
-	EventClass::GetInstance().Subscribe(UI_EVENT::ACTIVE_CHAT_SCENE, [&]() {
+	EventClass::GetInstance().Subscribe(SCENE_EVENT::ACTIVE_CHAT_SCENE, [&]() {
 		m_chatScene.SetActive(true);
 		m_mainScene.SetActive(false);
 		m_loadingScene.SetActive(false);
