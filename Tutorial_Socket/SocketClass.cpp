@@ -2,6 +2,7 @@
 
 SocketClass::SocketClass()
 {
+	SocketClass::GetInstance();
 }
 
 SocketClass::~SocketClass()

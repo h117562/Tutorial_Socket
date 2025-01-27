@@ -1,17 +1,16 @@
 #ifndef _SOCKET_CLASS_H_
 #define _SOCKET_CLASS_H_
 
-#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
-#endif
 
-#include <windows.h>
-#include <winsock2.h>
+#include <Windows.h>
+#include <WinSock2.h>
 #include <ws2tcpip.h>
-#include <iphlpapi.h>
 #include <thread>
 
-#pragma comment(lib, "Ws2_32.lib")
+#pragma comment (lib, "ws2_32.lib")
+#pragma comment (lib, "Mswsock.lib")
+#pragma comment (lib, "AdvApi32.lib")
 
 #include "EventClass.h"
 
