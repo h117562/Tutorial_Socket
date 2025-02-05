@@ -8,7 +8,6 @@
 #include "CameraClass.h"
 #include "FrameTimer.h"
 #include "EventClass.h"
-#include "SocketClass.h"
 
 //Elements
 #include "Plane.h"

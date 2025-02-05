@@ -31,13 +31,6 @@ bool SystemClass::Initialize()
 	//EventClass 초기화
 	EventClass::GetInstance();
 
-	//SocketClass 초기화
-	result = SocketClass::GetInstance().Initialize();
-	if (!result)
-	{
-		return false;
-	}
-
 	//InputClass 초기화
 	result = InputClass::GetInstance().Initialize(m_hinstance, m_hwnd);
 	if (!result)
@@ -56,6 +49,14 @@ bool SystemClass::Initialize()
 	result = m_frameTimer->Initialize();
 	if (!result)
 	{
+		return false;
+	}
+
+	//소켓 초기화
+	result = InitializeSocket();
+	if (!result)
+	{
+		MessageBox(m_hwnd, L"Could not initialize the SocketClass", L"Error", MB_OK);
 		return false;
 	}
 
@@ -264,6 +265,27 @@ void SystemClass::InitializeDisplaySettings()
 	}
 
 	return;
+}
+
+bool SystemClass::InitializeSocket()
+{
+	bool result;
+
+	//생성
+	m_socketClass = new SocketClass;
+	if (!m_socketClass)
+	{
+		return false;
+	}
+
+	//초기화
+	result = m_socketClass->Initialize();
+	if (!result)
+	{
+		return false;
+	}
+	
+	return true;
 }
 
 void SystemClass::Shutdown()

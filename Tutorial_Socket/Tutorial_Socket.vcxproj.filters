@@ -37,14 +37,14 @@
     <Filter Include="UI\TextClass">
       <UniqueIdentifier>{b3050870-fd9f-4736-907a-8552fcb372fa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI\Chat">
-      <UniqueIdentifier>{8a01d3a7-d1c8-4a6b-ab8d-98a109a338f5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="UI\Parents">
       <UniqueIdentifier>{ed030ba1-ab81-49db-a854-db32f14dfdc0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Socket">
       <UniqueIdentifier>{5d857950-f586-4bd9-aa2c-c5da55e62fc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chat">
+      <UniqueIdentifier>{8a01d3a7-d1c8-4a6b-ab8d-98a109a338f5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -112,13 +112,13 @@
       <Filter>UI\Elemetns</Filter>
     </ClInclude>
     <ClInclude Include="ChatScene.h">
-      <Filter>UI\Chat</Filter>
+      <Filter>Chat</Filter>
     </ClInclude>
     <ClInclude Include="MainScene.h">
-      <Filter>UI\Chat</Filter>
+      <Filter>Chat</Filter>
     </ClInclude>
     <ClInclude Include="LoadingScene.h">
-      <Filter>UI\Chat</Filter>
+      <Filter>Chat</Filter>
     </ClInclude>
     <ClInclude Include="ChatBox.h">
       <Filter>UI\Elemetns</Filter>
@@ -168,13 +168,13 @@
       <Filter>Shader\ShaderClass</Filter>
     </ClCompile>
     <ClCompile Include="ChatScene.cpp">
-      <Filter>UI\Chat</Filter>
+      <Filter>Chat</Filter>
     </ClCompile>
     <ClCompile Include="MainScene.cpp">
-      <Filter>UI\Chat</Filter>
+      <Filter>Chat</Filter>
     </ClCompile>
     <ClCompile Include="LoadingScene.cpp">
-      <Filter>UI\Chat</Filter>
+      <Filter>Chat</Filter>
     </ClCompile>
     <ClCompile Include="SocketClass.cpp">
       <Filter>Socket</Filter>

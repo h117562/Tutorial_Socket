@@ -22,7 +22,7 @@ enum struct SCENE_EVENT
 	EVENT_COUNT,//이벤트 개수
 };
 
-enum struct SOCKET_EVENT
+enum struct CHAT_EVENT
 {
 	DEFAULT,
 	JOIN_ROOM,
@@ -86,15 +86,15 @@ public:
 			m_sceneEvents[TO_INT(event)][i]();
 		}
 	}
-	////////////////////////////SOCKET_EVENT/////////////////////////////
+	////////////////////////////CHAT_EVENT/////////////////////////////
 	//이벤트 발생 시, 실행할 함수를 함수 포인터 배열에 등록하는 함수
-	void Subscribe(SOCKET_EVENT event, std::function<void(wchar_t*)> func)
+	void Subscribe(CHAT_EVENT event, std::function<void(wchar_t*)> func)
 	{
 		m_socketEvents[TO_INT(event)].push_back(func);
 	}
 
 	//이벤트 발생 시,  해당 이벤트의 함수들을 실행
-	void Publish(SOCKET_EVENT event, wchar_t* buffer)
+	void Publish(CHAT_EVENT event, wchar_t* buffer)
 	{
 		for (UINT i = 0; i < m_sceneEvents[TO_INT(event)].size(); i++)
 		{
@@ -102,10 +102,34 @@ public:
 		}
 	}
 
+	////////////////////////////소켓 전용/////////////////////////////
+	void ConnectSocket(const wchar_t* ip, unsigned short port)
+	{
+		m_connectFunc(ip, port);
+	}
+
+	void CheckConnection(bool result)
+	{
+		m_checkFunc(result);
+	}
+
+	void SubscribeConnect(std::function<void(const wchar_t*, unsigned short)> func)
+	{
+		m_connectFunc = func;
+	}
+
+	void SubscribeCheck(std::function<void(bool)> func)
+	{
+		m_checkFunc = func;
+	}
+
 private:
 	std::vector<std::function<void()>> m_uiEvents[TO_INT(UI_EVENT::EVENT_COUNT)];
 	std::vector<std::function<void()>> m_sceneEvents[TO_INT(SCENE_EVENT::EVENT_COUNT)];
-	std::vector<std::function<void(wchar_t*)>> m_socketEvents[TO_INT(SOCKET_EVENT::EVENT_COUNT)];
+	std::vector<std::function<void(wchar_t*)>> m_socketEvents[TO_INT(CHAT_EVENT::EVENT_COUNT)];
+
+	std::function<void(const wchar_t*, unsigned short)> m_connectFunc;
+	std::function<void(bool)> m_checkFunc;
 };
 
 #endif

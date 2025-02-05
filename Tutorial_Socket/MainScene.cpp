@@ -153,7 +153,7 @@ void MainScene::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMana
 	if (m_enterBtn->IsPressed())
 	{
 		//ipBox에 입력한 IP와 8001 포트 번호로 연결 시도
-		SocketClass::GetInstance().Connect(m_ipBox->GetText(), 8001);
+		EventClass::GetInstance().ConnectSocket(m_ipBox->GetText(), 8001);
 
 		EventClass::GetInstance().Publish(SCENE_EVENT::ACTIVE_LOADING_SCENE);
 	}
@@ -183,11 +183,7 @@ bool MainScene::Render(D3DClass* pD3DClass, TextClass* pTextClass, ShaderManager
 		return false;
 	}
 
-	result = m_label->Render(pTextClass);
-	if (!result)
-	{
-		return false;
-	}
+	m_label->Render(pTextClass);
 
 	return true;
 }

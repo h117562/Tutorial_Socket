@@ -20,7 +20,7 @@ SocketClass::~SocketClass()
 	WSACleanup();//WSAStartup 이후
 }
 
-HRESULT SocketClass::Initialize()
+bool SocketClass::Initialize()
 {
 	int result;
 	WSADATA wsaData;
@@ -30,26 +30,32 @@ HRESULT SocketClass::Initialize()
 	result = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (result != 0)
 	{
-		return S_FALSE;
+		return false;
 	}
 
 	//소켓 생성(IPv4, 신뢰할 수 있는 양방향 연결 기반 바이트 스트림, TCP)
 	m_sck = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (m_sck == INVALID_SOCKET)
 	{
-		return S_FALSE;
+		return false;
 	}
 
 	if (!m_recvThread)
 	{
 		//메시지 수신은 별도의 스레드에서 처리
-		m_recvThread = new std::thread(MessageReceive);
+		m_recvThread = new std::thread(&SocketClass::MessageReceive, this);
 	}
 
-	return S_OK;
+	//EventClass에 두 함수를 저장해놓고 사용
+	//winsock2 헤더가 포함된 클래스를 포함하면 재정의 오류가 뜨므로 함수포인터로 해결하였음
+	//모든 클래스에 #define 해주는 것보단 효율적이라 판단
+	EventClass::GetInstance().SubscribeConnect([&](const wchar_t* ip, unsigned short port) {Connect(ip, port); });
+	EventClass::GetInstance().SubscribeCheck([&](bool result) { result = CheckOnline(); });
+
+	return true;
 }
 
-HRESULT SocketClass::Connect(const wchar_t* ip, unsigned short port)
+bool SocketClass::Connect(const wchar_t* ip, unsigned short port)
 {
 	int result;
 	char ipstr[16];
@@ -68,7 +74,7 @@ HRESULT SocketClass::Connect(const wchar_t* ip, unsigned short port)
 	result = inet_pton(AF_INET, ipstr, &address.sin_addr);
 	if (result != 1)
 	{
-		return S_FALSE;
+		return false;
 	}
 	
 	std::thread th([&]() 
@@ -85,7 +91,7 @@ HRESULT SocketClass::Connect(const wchar_t* ip, unsigned short port)
 
 	th.join();
 
-	return S_OK;
+	return true;
 }
 
 //데이터 수신 함수
@@ -117,7 +123,7 @@ void SocketClass::MessageReceive()
 				break;
 			}
 
-			EventClass::GetInstance().Publish(SOCKET_EVENT::NEW_CHAT, chatBuffer);
+			EventClass::GetInstance().Publish(CHAT_EVENT::NEW_CHAT, chatBuffer);
 
 			break;
 		}
@@ -131,7 +137,7 @@ void SocketClass::MessageReceive()
 }
 
 //데이터 전송 함수
-HRESULT SocketClass::MessageSend(const wchar_t* msg, int length)
+bool SocketClass::MessageSend(const wchar_t* msg, int length)
 {
 	int result;
 
@@ -141,17 +147,17 @@ HRESULT SocketClass::MessageSend(const wchar_t* msg, int length)
 	result = send(m_sck, &buffer, 1, 0);
 	if (result == SOCKET_ERROR)
 	{
-		return S_FALSE;
+		return false;
 	}
 
 	//채팅 전송
 	result = send(m_sck, (char*)msg, length * sizeof(wchar_t), 0);
 	if (result == SOCKET_ERROR)
 	{
-		return S_FALSE;
+		return false;
 	}
 
-	return S_OK;
+	return true;
 }
 
 void SocketClass::Disconnect()

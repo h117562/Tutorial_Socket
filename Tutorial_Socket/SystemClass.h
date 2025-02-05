@@ -1,6 +1,7 @@
 #ifndef _SYSTEMCLASS_H_
 #define _SYSTEMCLASS_H_
 
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <fstream>
 #include <string>
@@ -28,6 +29,7 @@ public:
 
 private:
 	bool InitializeWindow();
+	bool InitializeSocket();
 	void InitializeDisplaySettings();
 	bool Frame();
 
@@ -40,7 +42,7 @@ private:
 
 	ApplicationClass* m_applicationClass;
 	FrameTimer* m_frameTimer;
-
+	SocketClass* m_socketClass;
 };
 
 static SystemClass* ApplicationHandle = nullptr;

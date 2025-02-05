@@ -1,15 +1,12 @@
 #ifndef _CHAT_SCENE_
 #define _CHAT_SCENE_
 
-#include <vector>
-
 #include "D3DClass.h"
 #include "TextClass.h"
 #include "InputClass.h"
 #include "ShaderManager.h"
 #include "CameraClass.h"
 #include "EventClass.h"
-#include "SocketClass.h"
 
 //Elements
 #include "Button.h"

@@ -75,7 +75,7 @@ bool LoadingScene::Initialize(ID3D11Device* pDevice, TextClass* pTextClass)
 
 void LoadingScene::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderManager, TextClass* pTextClass, CameraClass* pCameraClass, FrameTimer* pFrameTimer)
 {
-	bool state;
+	bool state = false;
 
 	XMMATRIX view, proj;
 
@@ -98,7 +98,7 @@ void LoadingScene::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderM
 	
 	m_label->SetText(tempText.c_str());
 
-	state = SocketClass::GetInstance().CheckOnline();
+	EventClass::GetInstance().CheckConnection(state);
 	if (state)
 	{
 		//연결 성공하면 다음 씬으로 넘어감
@@ -125,11 +125,7 @@ bool LoadingScene::Render(D3DClass* pD3DClass, TextClass* pTextClass, ShaderMana
 		return false;
 	}
 
-	result = m_label->Render(pTextClass);
-	if (!result)
-	{
-		return false;
-	}
+	m_label->Render(pTextClass);
 
 	return true;
 }

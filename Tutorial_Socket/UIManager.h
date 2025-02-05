@@ -6,7 +6,6 @@
 #include "InputClass.h"
 #include "FrameTimer.h"
 #include "EventClass.h"
-
 #include "DebugInfo.h"
 
 //Tutorial Socket

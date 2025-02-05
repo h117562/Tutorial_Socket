@@ -1,7 +1,7 @@
 #ifndef _FRAMETIMER_H_
 #define _FRAMETIMER_H_
 
-#include <windows.h>
+#include <Windows.h>
 
 class FrameTimer
 {

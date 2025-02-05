@@ -1,8 +1,12 @@
 
 //#pragma comment(linker , "/entry:WinMainCRTStartup /subsystem:console")
+#ifndef WIN32_LEAN_AND_MEAN//windows.h 에 포함된 winsock.h 제외용
+#define WIN32_LEAN_AND_MEAN
+#endif
+
+#include <windows.h>
 
 #include "SocketClass.h"
-
 #include "Global.h"
 #include "Systemclass.h"
 

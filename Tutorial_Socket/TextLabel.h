@@ -40,10 +40,8 @@ public:
 		return S_OK;
 	}
 
-	bool Render(TextClass* pTextClass)
+	void Render(TextClass* pTextClass)
 	{
-		bool result;
-
 		//저장된 브러쉬나 텍스트 형식이 없으면 기본 설정으로 텍스르 렌더링
 		if (m_textFormat == nullptr || m_textBrush == nullptr)
 		{
@@ -54,7 +52,7 @@ public:
 			pTextClass->RenderText(m_text.c_str(), m_textArea, m_textFormat, m_textBrush);
 		}
 
-		return true;
+		return;
 	}
 
 	//텍스트 가로 정렬

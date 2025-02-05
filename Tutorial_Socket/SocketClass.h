@@ -1,16 +1,16 @@
 #ifndef _SOCKET_CLASS_H_
 #define _SOCKET_CLASS_H_
 
+#ifndef WIN32_LEAN_AND_MEAN//windows.h 에 포함된 winsock.h 제외용
 #define WIN32_LEAN_AND_MEAN
+#endif
 
-#include <Windows.h>
-#include <WinSock2.h>
+#include <windows.h>
+#include <winsock2.h>
 #include <ws2tcpip.h>
 #include <thread>
 
-#pragma comment (lib, "ws2_32.lib")
-#pragma comment (lib, "Mswsock.lib")
-#pragma comment (lib, "AdvApi32.lib")
+#pragma comment(lib, "Ws2_32.lib")
 
 #include "EventClass.h"
 
@@ -22,26 +22,13 @@
 class SocketClass
 {
 public:
-	static SocketClass& GetInstance()
-	{
-		static SocketClass instance;
-
-		return instance;
-	}
-
-	//복사 생성자랑 대입 연산 제거
-	SocketClass(const SocketClass&) = delete;
-	void operator=(const SocketClass&) = delete;
-
-private:
 	SocketClass();
 	~SocketClass();
 
-public:
-	HRESULT Initialize();
-	HRESULT Connect(const wchar_t*, unsigned short);//서버 연결 함수
+	bool Initialize();
+	bool Connect(const wchar_t*, unsigned short);//서버 연결 함수
 	void Disconnect();//메시지 수신 쓰레드 종료
-	HRESULT MessageSend(const wchar_t* msg, int length);//메시지 송신 함수
+	bool MessageSend(const wchar_t* msg, int length);//메시지 송신 함수
 	bool CheckOnline();
 
 private:

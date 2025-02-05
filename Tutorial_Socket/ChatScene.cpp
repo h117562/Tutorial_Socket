@@ -117,7 +117,7 @@ bool ChatScene::Initialize(ID3D11Device* pDevice, TextClass* pTextClass)
 	}
 
 	//새로운 채팅 내역 밀어 넣기
-	EventClass::GetInstance().Subscribe(SOCKET_EVENT::NEW_CHAT, [&](wchar_t* data){
+	EventClass::GetInstance().Subscribe(CHAT_EVENT::NEW_CHAT, [&](wchar_t* data){
 		m_chatBox->AddText(data);
 		});
 
@@ -144,7 +144,7 @@ void ChatScene::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMana
 
 	if (m_exitBtn->IsPressed())
 	{
-		SocketClass::GetInstance().Disconnect();//연결 종료
+		EventClass::GetInstance().Publish(CHAT_EVENT::EXIT_ROOM, (wchar_t*)3);//연결 종료
 		EventClass::GetInstance().Publish(SCENE_EVENT::ACTIVE_MAIN_SCENE);//처음 씬으로 돌아감
 	}
 

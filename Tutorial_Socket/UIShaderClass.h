@@ -1,9 +1,6 @@
 #ifndef _UI_SHADER_CLASS_H_
 #define _UI_SHADER_CLASS_H_
 
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "d3dcompiler.lib")
-
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <directxmath.h>
