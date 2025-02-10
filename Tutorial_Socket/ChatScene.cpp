@@ -107,8 +107,8 @@ bool ChatScene::Initialize(ID3D11Device* pDevice, TextClass* pTextClass)
 		return false;
 	}
 
-	m_chatBox->SetHorizontalAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-	m_chatBox->SetVerticalAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	m_chatBox->SetHorizontalAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+	m_chatBox->SetVerticalAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
 	result = m_chatBox->SetTextBrush(pTextClass, 1.0f, 0.9f, 0.9f, 1.0f);
 	if (FAILED(result))
@@ -117,7 +117,7 @@ bool ChatScene::Initialize(ID3D11Device* pDevice, TextClass* pTextClass)
 	}
 
 	//새로운 채팅 내역 밀어 넣기
-	EventClass::GetInstance().Subscribe(CHAT_EVENT::NEW_CHAT, [&](wchar_t* data){
+	EventClass::GetInstance().SubscribeRecv([&](wchar_t* data){
 		m_chatBox->AddText(data);
 		});
 
@@ -142,9 +142,16 @@ void ChatScene::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMana
 
 	Render(pD3DClass, pTextClass, pShaderManager, view, proj);
 
+	EventClass::GetInstance().CheckConnection(&state);
+	if (!state)
+	{
+		MessageBox(hwnd, L"연결이 끊어졌습니다.", L"Error", MB_OK);
+		EventClass::GetInstance().Publish(SCENE_EVENT::ACTIVE_MAIN_SCENE);
+	}
+
 	if (m_exitBtn->IsPressed())
 	{
-		EventClass::GetInstance().Publish(CHAT_EVENT::EXIT_ROOM, (wchar_t*)3);//연결 종료
+		EventClass::GetInstance().DisconnectSocket();//연결 종료
 		EventClass::GetInstance().Publish(SCENE_EVENT::ACTIVE_MAIN_SCENE);//처음 씬으로 돌아감
 	}
 

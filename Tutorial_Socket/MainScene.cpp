@@ -152,8 +152,10 @@ void MainScene::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMana
 
 	if (m_enterBtn->IsPressed())
 	{
+		unsigned short port = 8001;
+
 		//ipBox에 입력한 IP와 8001 포트 번호로 연결 시도
-		EventClass::GetInstance().ConnectSocket(m_ipBox->GetText(), 8001);
+		EventClass::GetInstance().ConnectSocket(m_ipBox->GetText(), &port);
 
 		EventClass::GetInstance().Publish(SCENE_EVENT::ACTIVE_LOADING_SCENE);
 	}

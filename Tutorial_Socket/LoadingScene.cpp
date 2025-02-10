@@ -70,6 +70,8 @@ bool LoadingScene::Initialize(ID3D11Device* pDevice, TextClass* pTextClass)
 		return false;
 	}
 
+	EventClass::GetInstance().Subscribe(SCENE_EVENT::ACTIVE_LOADING_SCENE, [&]() {m_count = 0; });
+
 	return true;
 }
 
@@ -89,7 +91,7 @@ void LoadingScene::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderM
 
 	std::wstring tempText(L"접속중...");
 
-	int repeat = (int)m_count % 4 + 1;
+	int repeat = (int)m_count % 3;
 
 	for (int i = 0; i < repeat; i++)
 	{
@@ -98,9 +100,11 @@ void LoadingScene::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderM
 	
 	m_label->SetText(tempText.c_str());
 
-	EventClass::GetInstance().CheckConnection(state);
+	EventClass::GetInstance().CheckConnection(&state);
 	if (state)
 	{
+		m_count = 0.0f;
+
 		//연결 성공하면 다음 씬으로 넘어감
 		EventClass::GetInstance().Publish(SCENE_EVENT::ACTIVE_CHAT_SCENE);
 	}

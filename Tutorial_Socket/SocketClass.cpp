@@ -2,21 +2,15 @@
 
 SocketClass::SocketClass()
 {
+	m_address = {};
+	m_recvThread = 0;
+	m_online = false;
 }
 
 SocketClass::~SocketClass()
 {
 	Disconnect();
-
-	if (m_recvThread)
-	{
-		m_recvThread->detach();
-		delete m_recvThread;
-		m_recvThread = 0;
-	}
-
-	shutdown(m_sck, SD_BOTH);
-	closesocket(m_sck);
+	
 	WSACleanup();//WSAStartup 이후
 }
 
@@ -33,6 +27,24 @@ bool SocketClass::Initialize()
 		return false;
 	}
 
+	//EventClass에 두 함수를 저장해놓고 사용
+	//winsock2 헤더가 포함된 클래스를 포함하면 재정의 오류가 뜨므로 함수포인터로 해결하였음
+	//모든 클래스에 #define 해주는 것보단 효율적이라 판단
+	EventClass::GetInstance().SubscribeConnect([&](const wchar_t* ip, unsigned short* port) {Connect(ip, port); });
+	EventClass::GetInstance().SubscribeDisconnect([&]() {Disconnect(); });
+	EventClass::GetInstance().SubscribeCheck([&](bool* result) { *result = CheckOnline(); });
+
+	return true;
+}
+
+bool SocketClass::Connect(const wchar_t* ip, unsigned short* port)
+{
+	int result;
+	char ipstr[16];	
+	
+	//와이드 문자 변환
+	WideCharToMultiByte(CP_ACP, 0, ip, -1, ipstr, 16, nullptr, nullptr);
+		
 	//소켓 생성(IPv4, 신뢰할 수 있는 양방향 연결 기반 바이트 스트림, TCP)
 	m_sck = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (m_sck == INVALID_SOCKET)
@@ -40,56 +52,41 @@ bool SocketClass::Initialize()
 		return false;
 	}
 
-	if (!m_recvThread)
-	{
-		//메시지 수신은 별도의 스레드에서 처리
-		m_recvThread = new std::thread(&SocketClass::MessageReceive, this);
-	}
-
-	//EventClass에 두 함수를 저장해놓고 사용
-	//winsock2 헤더가 포함된 클래스를 포함하면 재정의 오류가 뜨므로 함수포인터로 해결하였음
-	//모든 클래스에 #define 해주는 것보단 효율적이라 판단
-	EventClass::GetInstance().SubscribeConnect([&](const wchar_t* ip, unsigned short port) {Connect(ip, port); });
-	EventClass::GetInstance().SubscribeCheck([&](bool result) { result = CheckOnline(); });
-
-	return true;
-}
-
-bool SocketClass::Connect(const wchar_t* ip, unsigned short port)
-{
-	int result;
-	char ipstr[16];
-	
-	//와이드 문자 변환
-	WideCharToMultiByte(CP_ACP, 0, ip, -1, ipstr, 16, nullptr, nullptr);
-		
 	//IPv4 주소 및 포트를 설정하는 구조체
-	SOCKADDR_IN address = {};
-
-	address.sin_family = AF_INET;//항상 AF_INET 값을 가져야 함, IPv4를 의미
-	address.sin_port = htons(port);//(host to net short) little Endian 에서 big으로 변환하는 함수
+	m_address.sin_family = AF_INET;//항상 AF_INET 값을 가져야 함, IPv4를 의미
+	m_address.sin_port = htons(*port);//(host to net short) little Endian 에서 big으로 변환하는 함수
 
 	//텍스트 형식의 IPv4, IPv6 주소를 이진형으로 변환
 	//정상적으로 실행됐을 경우 1을 반환
-	result = inet_pton(AF_INET, ipstr, &address.sin_addr);
+	result = inet_pton(AF_INET, ipstr, &m_address.sin_addr);
 	if (result != 1)
 	{
 		return false;
 	}
 	
-	std::thread th([&]() 
+	std::thread th([&]()
 		{
+			int errorCode;
+
 			//설정한 주소로 연결
 			//정상적으로 실행됐을 경우 0을 반환
-			result = connect(m_sck, (SOCKADDR*)&address, sizeof(address));
-			if (result == 0)
+			errorCode = connect(m_sck, (SOCKADDR*)&m_address, sizeof(m_address));
+			if (errorCode == 0)
 			{
 				m_online = true;
-				m_recvThread->join();
+		
+				if (!m_recvThread)
+				{
+					//메시지 수신은 별도의 스레드에서 처리
+					m_recvThread = new std::thread(&SocketClass::MessageReceive, this);
+					m_recvThread->detach();
+				}
+
+				return;
 			}
 		});
 
-	th.join();
+	th.detach();
 
 	return true;
 }
@@ -115,7 +112,7 @@ void SocketClass::MessageReceive()
 		{
 		case TYPE_CHAT://채팅 수신
 		{
-			wchar_t chatBuffer[256];//최대 입력 가능 글자를 256로 해두었음
+			wchar_t chatBuffer[256] = {};//최대 입력 가능 글자 256
 			result = recv(m_sck, (char*)chatBuffer, 256, 0);
 			if (result <= 0)
 			{
@@ -123,8 +120,8 @@ void SocketClass::MessageReceive()
 				break;
 			}
 
-			EventClass::GetInstance().Publish(CHAT_EVENT::NEW_CHAT, chatBuffer);
-
+			EventClass::GetInstance().RecvMsg(chatBuffer);
+			
 			break;
 		}
 		default:
@@ -147,6 +144,7 @@ bool SocketClass::MessageSend(const wchar_t* msg, int length)
 	result = send(m_sck, &buffer, 1, 0);
 	if (result == SOCKET_ERROR)
 	{
+		Disconnect();
 		return false;
 	}
 
@@ -154,6 +152,7 @@ bool SocketClass::MessageSend(const wchar_t* msg, int length)
 	result = send(m_sck, (char*)msg, length * sizeof(wchar_t), 0);
 	if (result == SOCKET_ERROR)
 	{
+		Disconnect();
 		return false;
 	}
 
@@ -162,7 +161,14 @@ bool SocketClass::MessageSend(const wchar_t* msg, int length)
 
 void SocketClass::Disconnect()
 {
+	closesocket(m_sck);
 	m_online = false;
+
+	if (m_recvThread)
+	{
+		delete m_recvThread;
+		m_recvThread = 0;
+	}
 }
 
 bool SocketClass::CheckOnline()

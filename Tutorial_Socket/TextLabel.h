@@ -1,6 +1,8 @@
 #ifndef _TEXT_LABEL_
 #define _TEXT_LABEL_
 
+#include <string>
+
 #include "RectTransform.h"
 #include "ShaderManager.h"
 #include "InputClass.h"

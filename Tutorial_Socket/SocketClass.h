@@ -8,6 +8,7 @@
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <string>
 #include <thread>
 
 #pragma comment(lib, "Ws2_32.lib")
@@ -26,7 +27,7 @@ public:
 	~SocketClass();
 
 	bool Initialize();
-	bool Connect(const wchar_t*, unsigned short);//서버 연결 함수
+	bool Connect(const wchar_t*, unsigned short*);//서버 연결 함수
 	void Disconnect();//메시지 수신 쓰레드 종료
 	bool MessageSend(const wchar_t* msg, int length);//메시지 송신 함수
 	bool CheckOnline();
@@ -36,6 +37,7 @@ private:
 	
 private:
 	SOCKET m_sck;
+	SOCKADDR_IN m_address;
 	std::thread* m_recvThread;
 	bool m_online;
 };

@@ -1,6 +1,8 @@
 #ifndef _TEXT_BOX_
 #define _TEXT_BOX_
 
+#include <string>
+
 #include "RectTransform.h"
 #include "RectTexture2D.h"
 #include "ShaderManager.h"

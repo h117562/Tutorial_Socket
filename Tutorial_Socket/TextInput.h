@@ -1,6 +1,8 @@
 #ifndef _TEXT_INPUT_
 #define _TEXT_INPUT_
 
+#include <string>
+
 #include "RectTransform.h"
 #include "RectTexture2D.h"
 #include "ShaderManager.h"
