@@ -108,7 +108,7 @@ bool ChatScene::Initialize(ID3D11Device* pDevice, TextClass* pTextClass)
 	}
 
 	m_chatBox->SetHorizontalAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-	m_chatBox->SetVerticalAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+	m_chatBox->SetVerticalAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR);
 
 	result = m_chatBox->SetTextBrush(pTextClass, 1.0f, 0.9f, 0.9f, 1.0f);
 	if (FAILED(result))
@@ -153,6 +153,13 @@ void ChatScene::Frame(D3DClass* pD3DClass, HWND hwnd, ShaderManager* pShaderMana
 	{
 		EventClass::GetInstance().DisconnectSocket();//연결 종료
 		EventClass::GetInstance().Publish(SCENE_EVENT::ACTIVE_MAIN_SCENE);//처음 씬으로 돌아감
+	}
+
+	state = InputClass::GetInstance().GetKeyPressedAndRelease(DIK_RETURN);
+	if (state)
+	{
+		EventClass::GetInstance().SendMsg(m_msgSend->GetText());
+		InputClass::GetInstance().SetText(L"");
 	}
 
 	return;

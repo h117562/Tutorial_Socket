@@ -97,7 +97,7 @@ public:
 		m_checkFunc(result);
 	}
 
-	void SendMsg(wchar_t* msg)
+	void SendMsg(const wchar_t* msg)
 	{
 		m_sendFunc(msg);
 	}
@@ -123,7 +123,7 @@ public:
 		m_disconnectFunc = func;
 	}
 
-	void SubscribeSend(std::function<void(wchar_t*)> func)
+	void SubscribeSend(std::function<void(const wchar_t*)> func)
 	{
 		m_sendFunc = func;
 	}
@@ -140,7 +140,7 @@ private:
 	std::function<void(const wchar_t*, unsigned short*)> m_connectFunc;
 	std::function<void()> m_disconnectFunc;
 	std::function<void(bool*)> m_checkFunc;
-	std::function<void(wchar_t*)> m_sendFunc;
+	std::function<void(const wchar_t*)> m_sendFunc;
 	std::function<void(wchar_t*)> m_recvFunc;
 };
 

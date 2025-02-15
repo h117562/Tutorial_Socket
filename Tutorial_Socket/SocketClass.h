@@ -15,10 +15,12 @@
 
 #include "EventClass.h"
 
+#define BUFFER_SIZE 256
+
 //메시지 유형
-#define TYPE_JOIN 1
-#define TYPE_EXIT 2
-#define TYPE_CHAT 3
+#define TYPE_JOIN 0x01//채팅방 입장 메시지
+#define TYPE_EXIT 0x02//채팅방 퇴장 메시지
+#define TYPE_CHAT 0x03//채팅
 
 class SocketClass
 {
@@ -29,7 +31,7 @@ public:
 	bool Initialize();
 	bool Connect(const wchar_t*, unsigned short*);//서버 연결 함수
 	void Disconnect();//메시지 수신 쓰레드 종료
-	bool MessageSend(const wchar_t* msg, int length);//메시지 송신 함수
+	bool MessageSend(const wchar_t* msg);//메시지 송신 함수
 	bool CheckOnline();
 
 private:
@@ -38,8 +40,8 @@ private:
 private:
 	SOCKET m_sck;
 	SOCKADDR_IN m_address;
-	std::thread* m_recvThread;
 	bool m_online;
+	bool m_recvThread;
 };
 
 #endif

@@ -416,7 +416,7 @@ LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT msg, WPARAM wparam,
 			//백스페이스의 경우 '\b'가 저장되므로 예외로 문자를 지우는 함수 호출 (\n는 괜찮음)
 			InputClass::GetInstance().RemoveLastChar();
 		}
-		else
+		else if (wparam != VK_RETURN)
 		{
 			//글자가 입력될 때 마다 inputClass의 멤버 변수에 저장
 			InputClass::GetInstance().AddText(static_cast<wchar_t>(wparam));

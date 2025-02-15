@@ -130,6 +130,11 @@ public:
 		return m_text.c_str();
 	}
 
+	void ClearText()
+	{
+		m_text.clear();
+	}
+
 	//텍스트 가로 정렬
 	void SetHorizontalAlignment(DWRITE_TEXT_ALIGNMENT flag)
 	{

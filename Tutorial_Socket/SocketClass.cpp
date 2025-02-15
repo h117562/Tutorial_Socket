@@ -2,18 +2,19 @@
 
 SocketClass::SocketClass()
 {
+	m_sck = {};
 	m_address = {};
-	m_recvThread = 0;
 	m_online = false;
+	m_recvThread = false;
 }
 
 SocketClass::~SocketClass()
 {
 	Disconnect();
-	
-	WSACleanup();//WSAStartup 이후
+	WSACleanup();//WSAStartup 이후에만 호출
 }
 
+//초기화
 bool SocketClass::Initialize()
 {
 	int result;
@@ -27,22 +28,24 @@ bool SocketClass::Initialize()
 		return false;
 	}
 
-	//EventClass에 두 함수를 저장해놓고 사용
+	//EventClass에 함수를 저장해놓고 사용
 	//winsock2 헤더가 포함된 클래스를 포함하면 재정의 오류가 뜨므로 함수포인터로 해결하였음
 	//모든 클래스에 #define 해주는 것보단 효율적이라 판단
 	EventClass::GetInstance().SubscribeConnect([&](const wchar_t* ip, unsigned short* port) {Connect(ip, port); });
 	EventClass::GetInstance().SubscribeDisconnect([&]() {Disconnect(); });
 	EventClass::GetInstance().SubscribeCheck([&](bool* result) { *result = CheckOnline(); });
+	EventClass::GetInstance().SubscribeSend([&](const wchar_t* msg) {MessageSend(msg); });
 
 	return true;
 }
 
+//연결 시도 함수
 bool SocketClass::Connect(const wchar_t* ip, unsigned short* port)
 {
 	int result;
 	char ipstr[16];	
 	
-	//와이드 문자 변환
+	//와이드 문자로 변환
 	WideCharToMultiByte(CP_ACP, 0, ip, -1, ipstr, 16, nullptr, nullptr);
 		
 	//소켓 생성(IPv4, 신뢰할 수 있는 양방향 연결 기반 바이트 스트림, TCP)
@@ -64,7 +67,8 @@ bool SocketClass::Connect(const wchar_t* ip, unsigned short* port)
 		return false;
 	}
 	
-	std::thread th([&]()
+	//connect 함수는 blocking 되므로 별도 스레드로 호출
+	std::thread connectionTh([&]()
 		{
 			int errorCode;
 
@@ -78,15 +82,22 @@ bool SocketClass::Connect(const wchar_t* ip, unsigned short* port)
 				if (!m_recvThread)
 				{
 					//메시지 수신은 별도의 스레드에서 처리
-					m_recvThread = new std::thread(&SocketClass::MessageReceive, this);
-					m_recvThread->detach();
+					std::thread recvTh(&SocketClass::MessageReceive, this);
+					recvTh.detach();
+
+					m_recvThread = true;
+				}
+				else
+				{
+					Disconnect();
 				}
 
 				return;
 			}
 		});
 
-	th.detach();
+	//스레드 실행
+	connectionTh.detach();
 
 	return true;
 }
@@ -95,12 +106,12 @@ bool SocketClass::Connect(const wchar_t* ip, unsigned short* port)
 void SocketClass::MessageReceive()
 {
 	int result;
-	char buffer;
+	char msgType;
 
 	while (m_online)
 	{
-		//오류 체크
-		result = recv(m_sck, &buffer, 1, 0);
+		//메시지 타입 수신
+		result = recv(m_sck, &msgType, sizeof(char), 0);
 		if (result <= 0)
 		{
 			Disconnect();
@@ -108,12 +119,14 @@ void SocketClass::MessageReceive()
 		}
 		
 		//메시지 타입 구분
-		switch (buffer)
+		switch (msgType)
 		{
-		case TYPE_CHAT://채팅 수신
+		case TYPE_CHAT:
 		{
-			wchar_t chatBuffer[256] = {};//최대 입력 가능 글자 256
-			result = recv(m_sck, (char*)chatBuffer, 256, 0);
+			wchar_t chatBuffer[BUFFER_SIZE] = {};//최대 입력 가능 글자 256
+
+			//채팅 수신
+			result = recv(m_sck, (char*)chatBuffer, BUFFER_SIZE * sizeof(wchar_t), 0);
 			if (result <= 0)
 			{
 				Disconnect();
@@ -131,17 +144,21 @@ void SocketClass::MessageReceive()
 		}
 	}
 
+	//스레드 종료했음을 의미
+	m_recvThread = false;
+
+	return;
 }
 
 //데이터 전송 함수
-bool SocketClass::MessageSend(const wchar_t* msg, int length)
+bool SocketClass::MessageSend(const wchar_t* msg)
 {
 	int result;
 
-	const char buffer = TYPE_CHAT;
+	const char msgType = TYPE_CHAT;
 
 	//메시지 타입 전송
-	result = send(m_sck, &buffer, 1, 0);
+	result = send(m_sck, &msgType, sizeof(char), 0);
 	if (result == SOCKET_ERROR)
 	{
 		Disconnect();
@@ -149,7 +166,7 @@ bool SocketClass::MessageSend(const wchar_t* msg, int length)
 	}
 
 	//채팅 전송
-	result = send(m_sck, (char*)msg, length * sizeof(wchar_t), 0);
+	result = send(m_sck, (char*)msg, BUFFER_SIZE * sizeof(wchar_t), 0);
 	if (result == SOCKET_ERROR)
 	{
 		Disconnect();
@@ -159,18 +176,14 @@ bool SocketClass::MessageSend(const wchar_t* msg, int length)
 	return true;
 }
 
+//연결 종료 함수
 void SocketClass::Disconnect()
 {
 	closesocket(m_sck);
 	m_online = false;
-
-	if (m_recvThread)
-	{
-		delete m_recvThread;
-		m_recvThread = 0;
-	}
 }
 
+//연결 확인 함수
 bool SocketClass::CheckOnline()
 {
 	return m_online;
