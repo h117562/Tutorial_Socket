@@ -40,8 +40,8 @@ private:
 private:
 	SOCKET m_sck;
 	SOCKADDR_IN m_address;
+	std::thread* m_recvThread;
 	bool m_online;
-	bool m_recvThread;
 };
 
 #endif

@@ -4,8 +4,8 @@ SocketClass::SocketClass()
 {
 	m_sck = {};
 	m_address = {};
+	m_recvThread = 0;
 	m_online = false;
-	m_recvThread = false;
 }
 
 SocketClass::~SocketClass()
@@ -32,7 +32,7 @@ bool SocketClass::Initialize()
 	//winsock2 헤더가 포함된 클래스를 포함하면 재정의 오류가 뜨므로 함수포인터로 해결하였음
 	//모든 클래스에 #define 해주는 것보단 효율적이라 판단
 	EventClass::GetInstance().SubscribeConnect([&](const wchar_t* ip, unsigned short* port) {Connect(ip, port); });
-	EventClass::GetInstance().SubscribeDisconnect([&]() {Disconnect(); });
+	EventClass::GetInstance().SubscribeDisconnect([&]() {Disconnect();});
 	EventClass::GetInstance().SubscribeCheck([&](bool* result) { *result = CheckOnline(); });
 	EventClass::GetInstance().SubscribeSend([&](const wchar_t* msg) {MessageSend(msg); });
 
@@ -77,26 +77,12 @@ bool SocketClass::Connect(const wchar_t* ip, unsigned short* port)
 			errorCode = connect(m_sck, (SOCKADDR*)&m_address, sizeof(m_address));
 			if (errorCode == 0)
 			{
-				m_online = true;
-		
-				if (!m_recvThread)
-				{
-					//메시지 수신은 별도의 스레드에서 처리
-					std::thread recvTh(&SocketClass::MessageReceive, this);
-					recvTh.detach();
-
-					m_recvThread = true;
-				}
-				else
-				{
-					Disconnect();
-				}
-
-				return;
+				//메시지 수신은 별도의 스레드에서 처리
+				m_recvThread = new std::thread(&SocketClass::MessageReceive, this);
 			}
 		});
 
-	//스레드 실행
+	//connect 되기전에 함수가 끝날 수 있으므로 detach로 분리
 	connectionTh.detach();
 
 	return true;
@@ -108,14 +94,17 @@ void SocketClass::MessageReceive()
 	int result;
 	char msgType;
 
-	while (m_online)
+	m_online = true;
+
+	while (true)
 	{
 		//메시지 타입 수신
 		result = recv(m_sck, &msgType, sizeof(char), 0);
 		if (result <= 0)
 		{
+			m_online = false;
 			Disconnect();
-			break;
+			return;
 		}
 		
 		//메시지 타입 구분
@@ -129,10 +118,12 @@ void SocketClass::MessageReceive()
 			result = recv(m_sck, (char*)chatBuffer, BUFFER_SIZE * sizeof(wchar_t), 0);
 			if (result <= 0)
 			{
+				m_online = false;
 				Disconnect();
-				break;
+				return;
 			}
 
+			//채팅 수신으로 ChatScene의 채팅 이력을 업데이트
 			EventClass::GetInstance().RecvMsg(chatBuffer);
 			
 			break;
@@ -143,9 +134,6 @@ void SocketClass::MessageReceive()
 		}
 		}
 	}
-
-	//스레드 종료했음을 의미
-	m_recvThread = false;
 
 	return;
 }
@@ -161,7 +149,6 @@ bool SocketClass::MessageSend(const wchar_t* msg)
 	result = send(m_sck, &msgType, sizeof(char), 0);
 	if (result == SOCKET_ERROR)
 	{
-		Disconnect();
 		return false;
 	}
 
@@ -169,7 +156,6 @@ bool SocketClass::MessageSend(const wchar_t* msg)
 	result = send(m_sck, (char*)msg, BUFFER_SIZE * sizeof(wchar_t), 0);
 	if (result == SOCKET_ERROR)
 	{
-		Disconnect();
 		return false;
 	}
 
@@ -180,7 +166,17 @@ bool SocketClass::MessageSend(const wchar_t* msg)
 void SocketClass::Disconnect()
 {
 	closesocket(m_sck);
-	m_online = false;
+
+	if(m_online)
+	{ 
+		if (m_recvThread != nullptr && m_recvThread->joinable())
+		{
+			m_recvThread->join();
+		}
+
+		delete m_recvThread;
+		m_recvThread = 0;
+	}
 }
 
 //연결 확인 함수
