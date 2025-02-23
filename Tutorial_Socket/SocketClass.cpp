@@ -96,7 +96,7 @@ void SocketClass::MessageReceive()
 
 	m_online = true;
 
-	while (true)
+	while (m_online)
 	{
 		//메시지 타입 수신
 		result = recv(m_sck, &msgType, sizeof(char), 0);

@@ -10,6 +10,7 @@
 #include <ws2tcpip.h>
 #include <string>
 #include <thread>
+#include <mutex>
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -41,6 +42,7 @@ private:
 	SOCKET m_sck;
 	SOCKADDR_IN m_address;
 	std::thread* m_recvThread;
+	std::mutex m_sync;
 	bool m_online;
 };
 
